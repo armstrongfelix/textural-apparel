@@ -40,9 +40,11 @@ export default function Cart() {
                 -
               </button>
               <span className="w-6 text-center">{item.qty}</span>
+              {item.stock != null && <span className="text-xs text-black/40 w-12">/ {item.stock}</span>}
               <button
                 onClick={() => updateQty(item._id, item.qty + 1)}
-                className="w-8 h-8 rounded border border-black/20 hover:bg-black/5 transition-colors"
+                disabled={item.qty >= (item.stock ?? Infinity)}
+                className="w-8 h-8 rounded border border-black/20 hover:bg-black/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 +
               </button>

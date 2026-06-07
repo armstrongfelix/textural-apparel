@@ -17,16 +17,19 @@ function reducer(state, action) {
       return { ...state, user: null, cart: [] }
     case 'ADD_TO_CART': {
       const existing = state.cart.find((item) => item._id === action.payload._id)
+      const stock = action.payload.stock ?? Infinity
       if (existing) {
+        if (existing.qty >= stock) return state
         return {
           ...state,
           cart: state.cart.map((item) =>
             item._id === action.payload._id
-              ? { ...item, qty: item.qty + 1 }
+              ? { ...item, qty: Math.min(item.qty + 1, stock) }
               : item
           ),
         }
       }
+      if (stock < 1) return state
       return { ...state, cart: [...state.cart, { ...action.payload, qty: 1 }] }
     }
     case 'REMOVE_FROM_CART':
@@ -39,7 +42,7 @@ function reducer(state, action) {
         ...state,
         cart: state.cart.map((item) =>
           item._id === action.payload.id
-            ? { ...item, qty: Math.max(1, action.payload.qty) }
+            ? { ...item, qty: Math.min(Math.max(1, action.payload.qty), item.stock ?? Infinity) }
             : item
         ),
       }
