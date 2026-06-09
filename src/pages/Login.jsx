@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useApp } from '../context/AppState'
 
 export default function Login() {
-  const { login } = useApp()
+  const { login, addToCart } = useApp()
   const navigate = useNavigate()
+  const location = useLocation()
+  const pendingProduct = location.state?.product
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
 
@@ -13,7 +15,8 @@ export default function Login() {
     setError('')
     try {
       await login(form.email, form.password)
-      navigate('/products')
+      if (pendingProduct) addToCart(pendingProduct)
+      navigate(pendingProduct ? `/products/${pendingProduct._id}` : '/products')
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed')
     }

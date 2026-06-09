@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useApp } from '../context/AppState'
 
 export default function ProductDetail() {
   const { id } = useParams()
-  const { addToCart } = useApp()
+  const { user, addToCart } = useApp()
+  const navigate = useNavigate()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -17,6 +18,14 @@ export default function ProductDetail() {
       .catch(() => setError('Failed to load product'))
       .finally(() => setLoading(false))
   }, [id])
+
+  function handleAddToCart() {
+    if (!user) {
+      navigate('/login', { state: { product } })
+      return
+    }
+    addToCart(product)
+  }
 
   if (loading) return <p className="text-center py-24 text-black/60">Loading...</p>
   if (error) return <p className="text-center py-24 text-red">{error}</p>
@@ -41,7 +50,7 @@ export default function ProductDetail() {
             ${product.price.toFixed(2)}
           </p>
           <button
-            onClick={() => addToCart(product)}
+            onClick={handleAddToCart}
             className="bg-dark-blue text-white px-8 py-3 rounded hover:bg-light-blue hover:text-black transition-colors"
           >
             Add to Cart

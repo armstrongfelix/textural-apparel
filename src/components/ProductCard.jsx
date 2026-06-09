@@ -1,8 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppState'
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useApp()
+  const { user, addToCart } = useApp()
+  const navigate = useNavigate()
+
+  function handleAddToCart(e) {
+    e.preventDefault()
+    if (!user) {
+      navigate('/login', { state: { product } })
+      return
+    }
+    addToCart(product)
+  }
 
   return (
     <figure className="border border-black/10 rounded p-6 flex flex-col hover:-translate-y-0.5 transition-transform">
@@ -17,10 +27,7 @@ export default function ProductCard({ product }) {
         </p>
       </Link>
       <button
-        onClick={(e) => {
-          e.preventDefault()
-          addToCart(product)
-        }}
+        onClick={handleAddToCart}
         className="mt-auto bg-dark-blue text-white py-2 rounded hover:bg-light-blue hover:text-black transition-colors"
       >
         Add to Cart

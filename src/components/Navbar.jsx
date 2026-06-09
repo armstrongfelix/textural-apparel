@@ -13,6 +13,7 @@ export default function Navbar() {
 
   const navLinks = !user ? (
     <>
+      <Link to="/products" className={linkCls} onClick={close}>Products</Link>
       <Link to="/login" className={linkCls} onClick={close}>Login</Link>
       <Link to="/register" className="bg-light-blue text-black px-3 py-1 rounded hover:opacity-90 transition-opacity text-center" onClick={close}>Register</Link>
     </>
